@@ -6,11 +6,11 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.navigation.NavigationView
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import okhttp3.Call
 import okhttp3.Response
@@ -23,11 +23,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
         val toggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -37,34 +33,40 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-
-        test()
-
+        getComicList()
         navView.setNavigationItemSelectedListener(this)
     }
 
-    private fun test() {
+    private fun getComicList() {
         val address =
-            "http://app.u17.com/v3/appV3_3/android/phone/list/getRankComicList?period=total&type=2&page=1&come_from=xiaomi&serialNumber=7de42d2e&v=4500102&model=MI+6&android_id=f5c9b6c9284551ad"
+            "http://app.u17.com/v3/appV3_3/android/phone/list/getRankComicList?" +
+                    "period=total&type=2" +
+                    "&page=1&come_from=xiaomi" +
+                    "&serialNumber=7de42d2e" +
+                    "&v=450010" +
+                    "&model=MI+6" +
+                    "&android_id=f5c9b6c9284551ad"
         sendOkHttpRequest(address, object : okhttp3.Callback {
             override fun onResponse(call: Call, response: Response) {
                 comicList.addAll(handleListResponse(response.body()!!.string()))
                 val adapter = ComicAdapter(comicList)
-                rcvComicRank.let {
-                    it.adapter = adapter
-                    it.setHasFixedSize(true)
-                    it.layoutManager = LinearLayoutManager(this@MainActivity)
+                this@MainActivity.runOnUiThread {
+                    rcvComicRank.let {
+                        it.adapter = adapter
+                        it.setHasFixedSize(true)
+                        it.layoutManager = LinearLayoutManager(this@MainActivity)
+                    }
+
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                Log.d("TAG", "Failed")
+                Log.d("TAG", "Failed - 获取漫画列表")
             }
         })
     }
 
     override fun onBackPressed() {
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
@@ -101,7 +103,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
         }
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
