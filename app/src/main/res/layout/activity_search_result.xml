@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchResultActivity">
+    tools:context=".Activities.SearchResultActivity">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.example.u17lite.MyRecyclerView
+        <com.example.u17lite.CustomViews.MyRecyclerView
             android:id="@+id/rcvComicRank"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

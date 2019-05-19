@@ -1,4 +1,4 @@
-package com.example.u17lite
+package com.example.u17lite.Adapters
 
 import android.app.Activity
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.u17lite.R
 import kotlinx.android.synthetic.main.rcv_item_image.view.*
 
 class ImageAdapter(val list: List<String>, activity: Activity) :

@@ -1,4 +1,4 @@
-package com.example.u17lite
+package com.example.u17lite.DataBeans
 
 import android.os.Parcel
 import android.os.Parcelable

@@ -1,4 +1,4 @@
-package com.example.u17lite;
+package com.example.u17lite.CustomViews;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -20,6 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.u17lite.R;
 
 import static android.view.MotionEvent.ACTION_CANCEL;
 import static android.view.MotionEvent.ACTION_DOWN;
@@ -66,7 +68,7 @@ public class ZoomRecyclerView extends RecyclerView {
 
     // control param
     boolean isScaling = false;    // 是否正在缩放
-    boolean isEnableScale = false;// 是否支持缩放
+    public boolean isEnableScale = false;// 是否支持缩放
 
     // zoom param
     ValueAnimator mScaleAnimator; //缩放动画

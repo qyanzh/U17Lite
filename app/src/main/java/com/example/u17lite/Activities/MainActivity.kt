@@ -1,4 +1,4 @@
-package com.example.u17lite
+package com.example.u17lite.Activities
 
 import android.app.SearchManager
 import android.content.Context
@@ -13,12 +13,19 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.u17lite.Adapters.ComicAdapter
+import com.example.u17lite.DataBeans.Comic
+import com.example.u17lite.R
+import com.example.u17lite.handleListResponse
+import com.example.u17lite.isWebConnect
+import com.example.u17lite.sendOkHttpRequest
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 
@@ -85,14 +92,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         "&v=450010" +
                         "&model=MI+6" +
                         "&android_id=f5c9b6c9284551ad"
-            sendOkHttpRequest(address, object : okhttp3.Callback {
+            sendOkHttpRequest(address, object : Callback {
                 override fun onResponse(call: Call, response: Response) {
-                    val responseString = handleListResponse(response.body()!!.string())
+                    val responseString =
+                        handleListResponse(response.body()!!.string())
                     comicList.addAll(responseString.list)
                     currentPage = responseString.currentPage
                     hasMore = responseString.hasMore
                     if (responseString.currentPage == 1) {
-                        val adapter = ComicAdapter(comicList, this@MainActivity)
+                        val adapter =
+                            ComicAdapter(comicList, this@MainActivity)
                         adapter.hasMore = hasMore
                         this@MainActivity.runOnUiThread {
                             rcvComicRank.let {

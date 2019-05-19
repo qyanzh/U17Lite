@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.u17lite.ChapterActivity">
+    tools:context="com.example.u17lite.Activities.ChapterActivity">
     <item
         android:icon="@drawable/ic_star_black_24dp"
         android:id="@+id/star"

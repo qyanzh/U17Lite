@@ -4,15 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".ReaderActivity">
+    tools:context=".Activities.ReaderActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
-    <com.example.u17lite.ZoomRecyclerView
+    <com.example.u17lite.CustomViews.ZoomRecyclerView
         android:id="@+id/zoomRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></com.example.u17lite.ZoomRecyclerView>
+        android:layout_height="match_parent"></com.example.u17lite.CustomViews.ZoomRecyclerView>
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->

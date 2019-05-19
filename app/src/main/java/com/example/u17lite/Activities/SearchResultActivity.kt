@@ -1,4 +1,4 @@
-package com.example.u17lite
+package com.example.u17lite.Activities
 
 import android.app.SearchManager
 import android.content.Intent
@@ -9,9 +9,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.u17lite.Adapters.ComicAdapter
+import com.example.u17lite.DataBeans.Comic
+import com.example.u17lite.R
+import com.example.u17lite.handleListResponse
+import com.example.u17lite.isWebConnect
+import com.example.u17lite.sendOkHttpRequest
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_search_result.*
 import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 
@@ -81,14 +88,18 @@ class SearchResultActivity : AppCompatActivity() {
                     "&v=4500102" +
                     "&model=MI+6" +
                     "&android_id=f5c9b6c9284551ad"
-            sendOkHttpRequest(address, object : okhttp3.Callback {
+            sendOkHttpRequest(address, object : Callback {
                 override fun onResponse(call: Call, response: Response) {
-                    val responseString = handleListResponse(response.body()!!.string())
+                    val responseString =
+                        handleListResponse(response.body()!!.string())
                     comicList.addAll(responseString.list)
                     currentPage = responseString.currentPage
                     hasMore = responseString.hasMore
                     if (responseString.currentPage == 1) {
-                        val adapter = ComicAdapter(comicList, this@SearchResultActivity)
+                        val adapter = ComicAdapter(
+                            comicList,
+                            this@SearchResultActivity
+                        )
                         adapter.hasMore = hasMore
                         this@SearchResultActivity.runOnUiThread {
                             rcvComicRank.let {

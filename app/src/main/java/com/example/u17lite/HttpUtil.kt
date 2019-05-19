@@ -2,6 +2,7 @@ package com.example.u17lite
 
 import android.content.Context
 import android.net.ConnectivityManager
+import com.example.u17lite.DataBeans.Comic
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject

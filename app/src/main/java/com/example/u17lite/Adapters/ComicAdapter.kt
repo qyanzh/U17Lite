@@ -1,4 +1,4 @@
-package com.example.u17lite
+package com.example.u17lite.Adapters
 
 import android.app.Activity
 import android.content.Intent
@@ -10,6 +10,9 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.u17lite.Activities.ChapterActivity
+import com.example.u17lite.DataBeans.Comic
+import com.example.u17lite.R
 import kotlinx.android.synthetic.main.rcv_item_comic.view.*
 import kotlinx.android.synthetic.main.rcv_item_load_more.view.*
 

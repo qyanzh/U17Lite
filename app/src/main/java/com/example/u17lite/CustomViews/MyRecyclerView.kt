@@ -1,10 +1,11 @@
-package com.example.u17lite
+package com.example.u17lite.CustomViews
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
+import com.example.u17lite.R
 
 class MyRecyclerView(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     RecyclerView(context, attrs, defStyle) {
@@ -64,7 +65,10 @@ class MyRecyclerView(context: Context, attrs: AttributeSet? = null, defStyle: In
 
     fun runAnimation() {
         val controller =
-            AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_slide_in_bottom)
+            AnimationUtils.loadLayoutAnimation(
+                context,
+                R.anim.layout_animation_slide_in_bottom
+            )
         layoutAnimation = controller
         scheduleLayoutAnimation()
     }

@@ -1,4 +1,4 @@
-package com.example.u17lite
+package com.example.u17lite.Activities
 
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +7,11 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.u17lite.Adapters.ChapterAdapter
+import com.example.u17lite.DataBeans.Comic
+import com.example.u17lite.R
+import com.example.u17lite.handleChapterListResponse
+import com.example.u17lite.sendOkHttpRequest
 import kotlinx.android.synthetic.main.activity_chapter.*
 import kotlinx.android.synthetic.main.content_comic.*
 import kotlinx.android.synthetic.main.rcv_item_comic.*
@@ -51,7 +56,8 @@ class ChapterActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 chapterList.addAll(handleChapterListResponse(response.body()!!.string()))
-                val adapter = ChapterAdapter(chapterList, this@ChapterActivity)
+                val adapter =
+                    ChapterAdapter(chapterList, this@ChapterActivity)
                 this@ChapterActivity.runOnUiThread {
                     rcvChapterList.let {
                         it.adapter = adapter

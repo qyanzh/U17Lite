@@ -1,4 +1,4 @@
-package com.example.u17lite
+package com.example.u17lite.Activities
 
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +10,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.u17lite.Adapters.ImageAdapter
+import com.example.u17lite.R
+import com.example.u17lite.handleImageListResponse
+import com.example.u17lite.sendOkHttpRequest
 import kotlinx.android.synthetic.main.activity_reader.*
 import okhttp3.Call
 import okhttp3.Callback
@@ -114,12 +118,14 @@ class ReaderActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 imageList.addAll(handleImageListResponse(response.body()!!.string()))
-                val adapter = ImageAdapter(imageList, this@ReaderActivity)
-                adapter.onTouchListener = object : ImageAdapter.OnTouchListener {
-                    override fun onTouch() {
-                        toggle()
+                val adapter =
+                    ImageAdapter(imageList, this@ReaderActivity)
+                adapter.onTouchListener =
+                    object : ImageAdapter.OnTouchListener {
+                        override fun onTouch() {
+                            toggle()
+                        }
                     }
-                }
                 this@ReaderActivity.runOnUiThread {
                     zoomRecyclerView.let {
                         it.adapter = adapter

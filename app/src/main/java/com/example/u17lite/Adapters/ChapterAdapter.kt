@@ -1,4 +1,4 @@
-package com.example.u17lite
+package com.example.u17lite.Adapters
 
 import android.app.Activity
 import android.content.Intent
@@ -8,6 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.u17lite.Activities.ReaderActivity
+import com.example.u17lite.DataBeans.Comic
+import com.example.u17lite.R
+import com.example.u17lite.isWebConnect
 import kotlinx.android.synthetic.main.rcv_item_chapter.view.*
 import java.text.SimpleDateFormat
 
