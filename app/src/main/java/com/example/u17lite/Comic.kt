@@ -24,7 +24,7 @@ class Comic(
         Log.d("TAG", title + comicId)
     }
 
-    class Chapter(val id: Int, val name: String)
+    class Chapter(val id: Int, val name: String, val smallCoverURL: String, val publishTime: Long)
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)

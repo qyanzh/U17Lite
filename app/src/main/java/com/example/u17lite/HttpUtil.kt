@@ -1,8 +1,18 @@
 package com.example.u17lite
 
+import android.content.Context
+import android.net.ConnectivityManager
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
+
+fun isWebConnect(context: Context): Boolean {
+    val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    manager.activeNetworkInfo?.let {
+        return it.isConnected
+    }
+    return false
+}
 
 fun sendOkHttpRequest(address: String, callback: okhttp3.Callback) {
     val client = OkHttpClient()
@@ -22,7 +32,14 @@ fun handleChapterListResponse(response: String): List<Comic.Chapter> {
             for (i in 0 until size) {
                 jsonArray.getJSONObject(i).let {
                     if (it.getInt("type") == 0) {
-                        list.add(Comic.Chapter(it.getInt("chapter_id"), it.getString("name")))
+                        list.add(
+                            Comic.Chapter(
+                                it.getInt("chapter_id"),
+                                it.getString("name"),
+                                it.getString("smallPlaceCover"),
+                                it.getLong("publish_time")
+                            )
+                        )
                     }
                 }
             }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,11 +49,21 @@ class SearchResultActivity : AppCompatActivity() {
                 }
             }
         })
+        if (!isWebConnect(this)) {
+            Toast.makeText(this, "请检查网络连接", Toast.LENGTH_SHORT).show()
+        }
         swipeRefreshLayout.setOnRefreshListener {
-            hasMore = true
-            currentPage = 0
-            comicList.clear()
-            getComicList()
+            if (isWebConnect(this)) {
+                hasMore = true
+                currentPage = 0
+                comicList.clear()
+                rcvComicRank.adapter?.notifyDataSetChanged()
+                getComicList()
+                rcvComicRank.runAnimation()
+            } else {
+                Toast.makeText(this, "请检查网络连接", Toast.LENGTH_SHORT).show()
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 
@@ -77,7 +88,7 @@ class SearchResultActivity : AppCompatActivity() {
                     currentPage = responseString.currentPage
                     hasMore = responseString.hasMore
                     if (responseString.currentPage == 1) {
-                        val adapter = ComicAdapter(comicList)
+                        val adapter = ComicAdapter(comicList, this@SearchResultActivity)
                         adapter.hasMore = hasMore
                         this@SearchResultActivity.runOnUiThread {
                             rcvComicRank.let {

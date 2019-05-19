@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
         val toggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         getComicList()
+        rcvComicRank.runAnimation()
         navView.setNavigationItemSelectedListener(this)
         rcvComicRank.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -51,11 +54,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         })
+        if (!isWebConnect(this)) {
+            Toast.makeText(this, "请检查网络连接", Toast.LENGTH_SHORT).show()
+        }
         swipeRefreshLayout.setOnRefreshListener {
-            hasMore = true
-            currentPage = 0
-            comicList.clear()
-            getComicList()
+            if (isWebConnect(this)) {
+                hasMore = true
+                currentPage = 0
+                comicList.clear()
+                rcvComicRank.adapter?.notifyDataSetChanged()
+                getComicList()
+                rcvComicRank.runAnimation()
+            } else {
+                Toast.makeText(this, "请检查网络连接", Toast.LENGTH_SHORT).show()
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 
@@ -79,7 +92,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     currentPage = responseString.currentPage
                     hasMore = responseString.hasMore
                     if (responseString.currentPage == 1) {
-                        val adapter = ComicAdapter(comicList)
+                        val adapter = ComicAdapter(comicList, this@MainActivity)
                         adapter.hasMore = hasMore
                         this@MainActivity.runOnUiThread {
                             rcvComicRank.let {

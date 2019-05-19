@@ -1,16 +1,19 @@
 package com.example.u17lite
 
+import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.rcv_item_comic.view.*
 import kotlinx.android.synthetic.main.rcv_item_load_more.view.*
 
-class ComicAdapter(var comicList: MutableList<Comic>) :
+class ComicAdapter(var comicList: MutableList<Comic>, var activity: Activity? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var hasMore = true
 
@@ -49,7 +52,19 @@ class ComicAdapter(var comicList: MutableList<Comic>) :
                     val intent = Intent(view.context, ChapterActivity::class.java).also {
                         it.putExtra("comic", comic)
                     }
-                    view.context.startActivity(intent)
+                    var options: ActivityOptionsCompat? = null
+                    activity?.run {
+                        options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            activity!!,
+                            view,
+                            ViewCompat.getTransitionName(view)!!
+                        )
+                    }
+                    if (options != null) {
+                        view.context.startActivity(intent, options!!.toBundle())
+                    } else {
+                        view.context.startActivity(intent)
+                    }
                 }
             }
         }
