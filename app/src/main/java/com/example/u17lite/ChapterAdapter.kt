@@ -1,14 +1,17 @@
 package com.example.u17lite
 
+import android.app.Activity
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.rcv_item_chapter.view.*
 import java.text.SimpleDateFormat
 
-class ChapterAdapter(val chapterList: MutableList<Comic.Chapter>) :
+class ChapterAdapter(val chapterList: MutableList<Comic.Chapter>, val activity: Activity) :
     RecyclerView.Adapter<ChapterAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
@@ -16,7 +19,18 @@ class ChapterAdapter(val chapterList: MutableList<Comic.Chapter>) :
         return ViewHolder(view).apply {
             view.setOnClickListener {
                 val chapter = chapterList[adapterPosition]
-                TODO("打开漫画")
+                if (isWebConnect(activity)) {
+                    view.context.startActivity(
+                        Intent(
+                            view.context,
+                            ReaderActivity::class.java
+                        ).apply {
+                            putExtra("chapterId", chapter.id)
+                            putExtra("chapterName", chapter.name)
+                        })
+                } else {
+                    Toast.makeText(activity, "请检查网络连接", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

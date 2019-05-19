@@ -20,6 +20,24 @@ fun sendOkHttpRequest(address: String, callback: okhttp3.Callback) {
     client.newCall(request).enqueue(callback)
 }
 
+fun handleImageListResponse(response: String): List<String> {
+    if (response.isNotEmpty()) {
+        try {
+            var jsonObject = JSONObject(response)
+            jsonObject = jsonObject.getJSONObject("data").getJSONObject("returnData")
+            val jsonArray = jsonObject.getJSONArray("image_list")
+            val size = jsonArray.length()
+            val list = mutableListOf<String>()
+            for (i in 0 until size) {
+                list.add(jsonArray.getJSONObject(i).getString("img05"))
+            }
+            return list
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    return listOf()
+}
 
 fun handleChapterListResponse(response: String): List<Comic.Chapter> {
     if (response.isNotEmpty()) {

@@ -51,10 +51,11 @@ class ChapterActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 chapterList.addAll(handleChapterListResponse(response.body()!!.string()))
-                val adapter = ChapterAdapter(chapterList)
+                val adapter = ChapterAdapter(chapterList, this@ChapterActivity)
                 this@ChapterActivity.runOnUiThread {
                     rcvChapterList.let {
                         it.adapter = adapter
+                        it.isNestedScrollingEnabled = false
                         it.setHasFixedSize(true)
                         it.layoutManager = LinearLayoutManager(this@ChapterActivity)
                     }
