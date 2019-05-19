@@ -1,6 +1,5 @@
 package com.example.u17lite
 
-import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
@@ -10,6 +9,7 @@ fun sendOkHttpRequest(address: String, callback: okhttp3.Callback) {
     val request = Request.Builder().url(address).build()
     client.newCall(request).enqueue(callback)
 }
+
 
 fun handleChapterListResponse(response: String): List<Comic.Chapter> {
     if (response.isNotEmpty()) {
@@ -34,11 +34,10 @@ fun handleChapterListResponse(response: String): List<Comic.Chapter> {
     return listOf()
 }
 
-fun handleListResponse(response: String): List<Comic> {
+fun handleListResponse(response: String): Result<Comic> {
     if (response.isNotEmpty()) {
         try {
             var jsonObject = JSONObject(response)
-            Log.d("TAG", jsonObject.getString("msg"))
             jsonObject = jsonObject.getJSONObject("data").getJSONObject("returnData")
             val jsonArray = jsonObject.getJSONArray("comics")
             val size = jsonArray.length()
@@ -54,10 +53,14 @@ fun handleListResponse(response: String): List<Comic> {
                     )
                 }
             }
-            return list
+            val hasMore = jsonObject.getBoolean("hasMore")
+            val currentPage = jsonObject.getInt("page")
+            return Result(list, currentPage, hasMore)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
-    return listOf()
+    return Result(listOf(), 0, false)
 }
+
+data class Result<T>(val list: List<T>, val currentPage: Int, val hasMore: Boolean)

@@ -4,6 +4,7 @@
     <item
         android:icon="@drawable/ic_search_white_24dp"
         android:id="@+id/search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         android:title="搜索"
         app:showAsAction="ifRoom" />
 </menu>

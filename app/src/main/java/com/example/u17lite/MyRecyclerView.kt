@@ -1,19 +1,26 @@
 package com.example.u17lite
 
 import android.content.Context
+import android.util.AttributeSet
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class MyRecyclerView(context: Context) : RecyclerView(context) {
-    private var emptyView: View? = null
+class MyRecyclerView(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
+    RecyclerView(context, attrs, defStyle) {
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    constructor(context: Context) : this(context, defStyle = 0)
+
+    var emptyView: View? = null
         set(emptyView) {
-            checkIfEmpty()
             field = emptyView
+            checkIfEmpty()
         }
 
     fun checkIfEmpty() {
         adapter?.let {
-            emptyView?.visibility = if (it.itemCount > 0) View.GONE else View.VISIBLE
+            emptyView?.visibility = if (it.itemCount > 1) View.GONE else View.VISIBLE
         }
     }
 

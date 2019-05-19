@@ -26,18 +26,19 @@ class ChapterActivity : AppCompatActivity() {
             setDisplayHomeAsUpEnabled(true)
             title = "漫画详情"
         }
-        getChapterList()
-        Glide.with(this).load(intent.getStringExtra("coverURL")).into(imgCover)
-        tvTitle.text = intent.getStringExtra("title")
-        tvAuthor.text = intent.getStringExtra("author")
-        tvDescription.text = intent.getStringExtra("description")
+        val comic = intent.getParcelableExtra<Comic>("comic")
+        getChapterList(comic.comicId)
+        Glide.with(this).load(comic.coverURL).into(imgCover)
+        tvTitle.text = comic.title
+        tvAuthor.text = comic.author
+        tvDescription.text = comic.description
     }
 
-    private fun getChapterList() {
+    private fun getChapterList(comicId: Int) {
         val address =
             "http://app.u17.com/v3/appV3_3/android/phone/comic/detail_static_new?" +
                     "come_from=xiaomi" +
-                    "&comicid=" + intent.getIntExtra("comicId", 0) +
+                    "&comicid=" + comicId +
                     "&serialNumber=7de42d2e" +
                     "&v=4500102" +
                     "&model=MI+6" +
