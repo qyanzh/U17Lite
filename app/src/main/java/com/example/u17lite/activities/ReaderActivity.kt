@@ -1,4 +1,4 @@
-package com.example.u17lite.Activities
+package com.example.u17lite.activities
 
 import android.os.Bundle
 import android.os.Handler
@@ -10,8 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.u17lite.Adapters.ImageAdapter
 import com.example.u17lite.R
+import com.example.u17lite.adapters.ImageAdapter
 import com.example.u17lite.handleImageListResponse
 import com.example.u17lite.sendOkHttpRequest
 import kotlinx.android.synthetic.main.activity_reader.*
@@ -67,7 +67,7 @@ class ReaderActivity : AppCompatActivity() {
         supportActionBar?.title = intent.getStringExtra("chapterName")
         mVisible = true
 
-        getImageList(intent.getIntExtra("chapterId", 0))
+        getImageList(intent.getLongExtra("comicId", 0))
 
         // Set up the user interaction to manually show or hide the system UI.
         //zoomRecyclerView.setOnClickListener { toggle() }
@@ -102,7 +102,7 @@ class ReaderActivity : AppCompatActivity() {
         }
     }
 
-    private fun getImageList(chapterId: Int) {
+    private fun getImageList(chapterId: Long) {
         val address =
             "http://app.u17.com/v3/appV3_3/android/phone/comic/chapterNew?" +
                     "come_from=xiaomi" +

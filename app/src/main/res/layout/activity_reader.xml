@@ -4,15 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".Activities.ReaderActivity">
+    tools:context=".activities.ReaderActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
-    <com.example.u17lite.CustomViews.ZoomRecyclerView
+    <com.example.u17lite.customViews.ZoomRecyclerView
         android:id="@+id/zoomRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></com.example.u17lite.CustomViews.ZoomRecyclerView>
+        android:layout_height="match_parent"></com.example.u17lite.customViews.ZoomRecyclerView>
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
@@ -22,7 +22,7 @@
     <!--android:fitsSystemWindows="true">-->
 
     <!--<LinearLayout-->
-    <!--android:id="@+id/fullscreen_content_controls"-->
+    <!--android:comicId="@+comicId/fullscreen_content_controls"-->
     <!--style="?metaButtonBarStyle"-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
@@ -32,7 +32,7 @@
     <!--tools:ignore="UselessParent">-->
 
     <!--<Button-->
-    <!--android:id="@+id/dummy_button"-->
+    <!--android:comicId="@+comicId/dummy_button"-->
     <!--style="?metaButtonBarButtonStyle"-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->

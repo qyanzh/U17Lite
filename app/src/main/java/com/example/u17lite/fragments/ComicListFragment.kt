@@ -1,93 +1,95 @@
-package com.example.u17lite.Activities
+package com.example.u17lite.fragments
 
-import android.app.SearchManager
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.u17lite.Adapters.ComicAdapter
-import com.example.u17lite.DataBeans.Comic
 import com.example.u17lite.R
+import com.example.u17lite.adapters.ComicAdapter
+import com.example.u17lite.dataBeans.Comic
 import com.example.u17lite.handleListResponse
 import com.example.u17lite.isWebConnect
 import com.example.u17lite.sendOkHttpRequest
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_search_result.*
+import kotlinx.android.synthetic.main.fragment_comic_list.*
+import kotlinx.android.synthetic.main.fragment_comic_list.view.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 
-class SearchResultActivity : AppCompatActivity() {
+class ComicListFragment : Fragment() {
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
+    companion object {
+        @JvmStatic
+        fun newInstance(prefix: String, postfix: String) =
+            ComicListFragment().apply {
+                arguments = Bundle().apply {
+                    putString("prefix", prefix)
+                    putString("postfix", postfix)
+                }
             }
-            else -> super.onOptionsItemSelected(item)
+    }
+
+    lateinit var addressPrefix: String
+    lateinit var addressPostfix: String
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            addressPrefix = it.getString("prefix")!!
+            addressPostfix = it.getString("postfix")!!
         }
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search_result)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        // Verify the action and get the query
-        if (Intent.ACTION_SEARCH == intent.action) {
-            query = intent.getStringExtra(SearchManager.QUERY)
-            supportActionBar?.title = "\"$query\"的搜索结果"
-            getComicList()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_comic_list, container, false)
+        if (!isWebConnect(context!!)) {
+            Toast.makeText(context, "请检查网络连接", Toast.LENGTH_SHORT).show()
         }
-        rcvComicRank.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        getComicListFromServer()
+        view.rcvComicRank.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if ((recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() + 1 == recyclerView.adapter?.itemCount) {
                         Log.d("TAG", "到底了")
-                        getComicList()
+                        getComicListFromServer()
                     }
                 }
             }
         })
-        if (!isWebConnect(this)) {
-            Toast.makeText(this, "请检查网络连接", Toast.LENGTH_SHORT).show()
-        }
-        swipeRefreshLayout.setOnRefreshListener {
-            if (isWebConnect(this)) {
+        view.swipeRefreshLayout.setOnRefreshListener {
+            if (isWebConnect(context!!)) {
                 hasMore = true
                 currentPage = 0
                 comicList.clear()
                 rcvComicRank.adapter?.notifyDataSetChanged()
-                getComicList()
-                rcvComicRank.runAnimation()
+                getComicListFromServer()
+//                rcvComicRank.runAnimation()
             } else {
-                Toast.makeText(this, "请检查网络连接", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "请检查网络连接", Toast.LENGTH_SHORT).show()
                 swipeRefreshLayout.isRefreshing = false
             }
         }
+        return view
     }
 
     val comicList = mutableListOf<Comic>()
-    var query: String? = null
-    var hasMore: Boolean = true
     var currentPage = 0
-    private fun getComicList(page: Int = currentPage + 1) {
+    var hasMore: Boolean = true
+    private fun getComicListFromServer(page: Int = currentPage + 1) {
         if (hasMore) {
-            val address = "http://app.u17.com/v3/appV3_3/android/phone/search/searchResult?" +
-                    "q=$query" +
-                    "&page=$page" +
-                    "&come_from=xiaomi" +
-                    "&serialNumber=7de42d2e" +
-                    "&v=4500102" +
-                    "&model=MI+6" +
-                    "&android_id=f5c9b6c9284551ad"
+            val address = addressPrefix +
+                    "&page=$page" + addressPostfix
+
             sendOkHttpRequest(address, object : Callback {
                 override fun onResponse(call: Call, response: Response) {
                     val responseString =
@@ -98,19 +100,19 @@ class SearchResultActivity : AppCompatActivity() {
                     if (responseString.currentPage == 1) {
                         val adapter = ComicAdapter(
                             comicList,
-                            this@SearchResultActivity
+                            activity
                         )
                         adapter.hasMore = hasMore
-                        this@SearchResultActivity.runOnUiThread {
+                        activity?.runOnUiThread {
                             rcvComicRank.let {
                                 it.adapter = adapter
                                 it.emptyView = emptyView
                                 it.setHasFixedSize(true)
-                                it.layoutManager = LinearLayoutManager(this@SearchResultActivity)
+                                it.layoutManager = LinearLayoutManager(activity)
                             }
                         }
                     } else {
-                        this@SearchResultActivity.runOnUiThread {
+                        activity?.runOnUiThread {
                             rcvComicRank.let {
                                 (it.adapter as ComicAdapter).hasMore = hasMore
                                 it.adapter?.notifyDataSetChanged()
@@ -120,12 +122,14 @@ class SearchResultActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call, e: IOException) {
-                    Log.d("TAG", "Failed - 获取搜索结果")
+                    Log.d("TAG", "Failed - $address")
                 }
             })
-            if (swipeRefreshLayout.isRefreshing) {
-                swipeRefreshLayout.isRefreshing = false
-                Snackbar.make(rcvComicRank, "刷新成功", Snackbar.LENGTH_SHORT).show()
+            swipeRefreshLayout?.let {
+                if (it.isRefreshing) {
+                    it.isRefreshing = false
+                    Snackbar.make(rcvComicRank, "刷新成功", Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
     }

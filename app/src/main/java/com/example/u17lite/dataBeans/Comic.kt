@@ -1,37 +1,45 @@
-package com.example.u17lite.DataBeans
+package com.example.u17lite.dataBeans
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.util.Log
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-
+@Entity
 class Comic(
-    val title: String,
-    val comicId: Int,
+    @PrimaryKey val comicId: Long,
+    var title: String,
     val author: String,
     val description: String,
     val coverURL: String
 ) : Parcelable {
+
+
+    var lastUpdateTime: Long = 0
+    var isSubscribed = true
+    var isDownloaded = true
+
     constructor(parcel: Parcel) : this(
+        parcel.readLong(),
         parcel.readString(),
-        parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString()
-    )
-
-    init {
-        Log.d("TAG", title + comicId)
+    ) {
+        lastUpdateTime = parcel.readLong()
+        isSubscribed = parcel.readByte() != 0.toByte()
+        isDownloaded = parcel.readByte() != 0.toByte()
     }
 
-    class Chapter(val id: Int, val name: String, val smallCoverURL: String, val publishTime: Long)
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeLong(comicId)
         parcel.writeString(title)
-        parcel.writeInt(comicId)
         parcel.writeString(author)
         parcel.writeString(description)
         parcel.writeString(coverURL)
+        parcel.writeLong(lastUpdateTime)
+        parcel.writeByte(if (isSubscribed) 1 else 0)
+        parcel.writeByte(if (isDownloaded) 1 else 0)
     }
 
     override fun describeContents(): Int {
@@ -47,4 +55,5 @@ class Comic(
             return arrayOfNulls(size)
         }
     }
+
 }

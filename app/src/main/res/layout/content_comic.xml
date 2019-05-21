@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.ChapterActivity"
+    tools:context=".activities.ChapterActivity"
     android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -16,6 +16,7 @@
         <include layout="@layout/rcv_item_comic" />
 
         <TextView
+            android:layout_marginHorizontal="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="免费章节列表" />

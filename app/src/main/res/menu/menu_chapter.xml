@@ -1,14 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.u17lite.Activities.ChapterActivity">
+    tools:context="com.example.u17lite.activities.ChapterActivity">
     <item
-        android:icon="@drawable/ic_star_black_24dp"
+        android:icon="@drawable/ic_star_border_black_24dp"
         android:id="@+id/star"
         android:title="订阅"
         app:showAsAction="ifRoom" />
     <item
-        android:icon="@drawable/ic_cloud_download_black_24dp"
+        android:icon="@drawable/ic_download_white"
         android:id="@+id/download"
         android:title="下载"
         app:showAsAction="ifRoom" />

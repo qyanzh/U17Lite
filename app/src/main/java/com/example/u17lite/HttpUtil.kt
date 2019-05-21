@@ -2,7 +2,8 @@ package com.example.u17lite
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.example.u17lite.DataBeans.Comic
+import com.example.u17lite.dataBeans.Chapter
+import com.example.u17lite.dataBeans.Comic
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
@@ -21,6 +22,19 @@ fun sendOkHttpRequest(address: String, callback: okhttp3.Callback) {
     client.newCall(request).enqueue(callback)
 }
 
+fun handleSubscribeResponse(response: String): Long {
+    if (response.isNotEmpty()) {
+        try {
+            var jsonObject = JSONObject(response)
+            jsonObject = jsonObject.getJSONObject("data")
+                .getJSONObject("returnData").getJSONObject("comic")
+            return jsonObject.getLong("last_update_time")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    return 0
+}
 fun handleImageListResponse(response: String): List<String> {
     if (response.isNotEmpty()) {
         try {
@@ -40,20 +54,20 @@ fun handleImageListResponse(response: String): List<String> {
     return listOf()
 }
 
-fun handleChapterListResponse(response: String): List<Comic.Chapter> {
+fun handleChapterListResponse(response: String): List<Chapter> {
     if (response.isNotEmpty()) {
         try {
             var jsonObject = JSONObject(response)
             jsonObject = jsonObject.getJSONObject("data").getJSONObject("returnData")
             val jsonArray = jsonObject.getJSONArray("chapter_list")
             val size = jsonArray.length()
-            val list = mutableListOf<Comic.Chapter>()
+            val list = mutableListOf<Chapter>()
             for (i in 0 until size) {
                 jsonArray.getJSONObject(i).let {
                     if (it.getInt("type") == 0) {
                         list.add(
-                            Comic.Chapter(
-                                it.getInt("chapter_id"),
+                            Chapter(
+                                it.getLong("chapter_id"),
                                 it.getString("name"),
                                 it.getString("smallPlaceCover"),
                                 it.getLong("publish_time")
@@ -82,8 +96,7 @@ fun handleListResponse(response: String): Result<Comic> {
                 jsonArray.getJSONObject(i).let {
                     list.add(
                         Comic(
-                            it.getString("name"),
-                            it.getInt("comicId"), it.getString("author"),
+                            it.getLong("comicId"), it.getString("name"), it.getString("author"),
                             it.getString("description"), it.getString("cover")
                         )
                     )

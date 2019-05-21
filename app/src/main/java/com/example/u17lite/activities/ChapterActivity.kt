@@ -1,4 +1,4 @@
-package com.example.u17lite.Activities
+package com.example.u17lite.activities
 
 import android.os.Bundle
 import android.util.Log
@@ -7,9 +7,10 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.u17lite.Adapters.ChapterAdapter
-import com.example.u17lite.DataBeans.Comic
 import com.example.u17lite.R
+import com.example.u17lite.adapters.ChapterAdapter
+import com.example.u17lite.dataBeans.Chapter
+import com.example.u17lite.dataBeans.Comic
 import com.example.u17lite.handleChapterListResponse
 import com.example.u17lite.sendOkHttpRequest
 import kotlinx.android.synthetic.main.activity_chapter.*
@@ -39,7 +40,7 @@ class ChapterActivity : AppCompatActivity() {
         tvDescription.text = comic.description
     }
 
-    private fun getChapterList(comicId: Int) {
+    private fun getChapterList(comicId: Long) {
         val address =
             "http://app.u17.com/v3/appV3_3/android/phone/comic/detail_static_new?" +
                     "come_from=xiaomi" +
@@ -48,7 +49,7 @@ class ChapterActivity : AppCompatActivity() {
                     "&v=4500102" +
                     "&model=MI+6" +
                     "&android_id=f5c9b6c9284551ad"
-        val chapterList = mutableListOf<Comic.Chapter>()
+        val chapterList = mutableListOf<Chapter>()
         sendOkHttpRequest(address, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("TAG", "Failed - 获取漫画章节")
@@ -88,5 +89,10 @@ class ChapterActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_chapter, menu)
         return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        //menu?.getItem(0)?.setIcon(R.drawable.ic_star_black_24dp)
+        return super.onPrepareOptionsMenu(menu)
     }
 }

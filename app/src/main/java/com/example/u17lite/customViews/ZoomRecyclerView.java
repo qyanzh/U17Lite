@@ -1,4 +1,4 @@
-package com.example.u17lite.CustomViews;
+package com.example.u17lite.customViews;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

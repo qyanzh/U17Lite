@@ -1,4 +1,4 @@
-package com.example.u17lite.Adapters
+package com.example.u17lite.adapters
 
 import android.app.Activity
 import android.view.LayoutInflater

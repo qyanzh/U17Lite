@@ -1,4 +1,4 @@
-package com.example.u17lite.CustomViews
+package com.example.u17lite.customViews
 
 import android.content.Context
 import android.util.AttributeSet
