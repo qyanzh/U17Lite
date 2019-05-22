@@ -78,6 +78,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        isForeground = false
+    }
+
     private fun runSubscribeThread() {
         isForeground = true
         Thread {
@@ -139,11 +144,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         notificationManager.createNotificationChannel(channel)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        isForeground = false
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
@@ -174,10 +174,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_download -> {
-                startActivity(Intent(this, TestActivity::class.java))
             }
             R.id.nav_star -> {
-
+                startActivity(Intent(this, SubscribeActivity::class.java))
+            }
+            R.id.nav_test -> {
+                startActivity(Intent(this, TestActivity::class.java))
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)

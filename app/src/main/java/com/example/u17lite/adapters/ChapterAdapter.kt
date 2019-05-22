@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.u17lite.R
+import com.example.u17lite.activities.ChapterActivity
 import com.example.u17lite.activities.ReaderActivity
 import com.example.u17lite.dataBeans.Chapter
 import com.example.u17lite.isWebConnect
@@ -32,8 +33,8 @@ class ChapterAdapter(
                             view.context,
                             ReaderActivity::class.java
                         ).apply {
-                            putExtra("comicId", chapter.chapterId)
-                            putExtra("chapterName", chapter.name)
+                            putExtra("download", (activity as ChapterActivity).download)
+                            putExtra("chapter", chapter)
                         })
                 } else {
                     Toast.makeText(activity, "请检查网络连接", Toast.LENGTH_SHORT).show()

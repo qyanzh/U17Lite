@@ -16,6 +16,7 @@
         <include layout="@layout/rcv_item_comic" />
 
         <TextView
+            android:id="@+id/tvChapterList"
             android:layout_marginHorizontal="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

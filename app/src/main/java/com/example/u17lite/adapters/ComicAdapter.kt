@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.u17lite.R
 import com.example.u17lite.activities.ChapterActivity
+import com.example.u17lite.activities.DownloadActivity
+import com.example.u17lite.activities.MainActivity
+import com.example.u17lite.activities.SearchResultActivity
 import com.example.u17lite.dataBeans.Comic
 import kotlinx.android.synthetic.main.rcv_item_comic.view.*
 import kotlinx.android.synthetic.main.rcv_item_load_more.view.*
@@ -22,10 +25,15 @@ class ComicAdapter(var comicList: MutableList<Comic>, var activity: Activity? = 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is LoadMoreViewHolder) {
-            if (itemCount == 1) holder.tvLoading.visibility = View.GONE
-            if (!hasMore) {
-                Log.d("TAG", "what")
-                holder.tvLoading.text = "到底了"
+            if (activity is MainActivity || activity is SearchResultActivity) {
+                if (itemCount == 1) holder.tvLoading.visibility = View.GONE
+                if (!hasMore) {
+                    Log.d("TAG", "what")
+                    holder.tvLoading.text = "到底了"
+                    holder.progressBar.visibility = View.GONE
+                }
+            } else {
+                holder.tvLoading.visibility = View.GONE
                 holder.progressBar.visibility = View.GONE
             }
         } else if (holder is ComicViewHolder) {
@@ -54,6 +62,7 @@ class ComicAdapter(var comicList: MutableList<Comic>, var activity: Activity? = 
                     val comic = comicList[adapterPosition]
                     val intent = Intent(view.context, ChapterActivity::class.java).also {
                         it.putExtra("comic", comic)
+                        it.putExtra("type", if (activity is DownloadActivity) "download" else null)
                     }
                     var options: ActivityOptionsCompat? = null
                     activity?.run {

@@ -8,21 +8,15 @@ interface ChapterDao {
     @Query("SELECT * FROM chapter")
     fun getAll(): List<Chapter>
 
-    @Query("SELECT * FROM chapter WHERE chapterId IN (:chapterIds)")
-    fun loadAllByIds(chapterIds: LongArray): List<Chapter>
+    @Query("SELECT * FROM chapter WHERE chapterId = :chapterId")
+    fun find(chapterId: Long): Chapter?
 
     @Insert(onConflict = REPLACE)
-    fun insertAll(vararg users: Chapter)
-
-    @Query("SELECT * FROM chapter WHERE chapterId = :chapter")
-    fun isExist(chapter: Long): Boolean
+    fun insert(vararg users: Chapter)
 
     @Update
     fun update(vararg chapters: Chapter)
 
-    @Update
-    fun update(chapters: List<Chapter>)
-
     @Delete
-    fun delete(user: Chapter)
+    fun delete(chapter: Chapter)
 }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.u17lite.R
 import com.example.u17lite.adapters.ImageAdapter
+import com.example.u17lite.dataBeans.Chapter
 import com.example.u17lite.handleImageListResponse
 import com.example.u17lite.sendOkHttpRequest
 import kotlinx.android.synthetic.main.activity_reader.*
@@ -59,6 +60,7 @@ class ReaderActivity : AppCompatActivity() {
         false
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -67,16 +69,51 @@ class ReaderActivity : AppCompatActivity() {
         supportActionBar?.title = intent.getStringExtra("chapterName")
         mVisible = true
 
-        getImageList(intent.getLongExtra("comicId", 0))
+        val chapter = intent.getParcelableExtra<Chapter>("chapter")
+        if (intent.getBooleanExtra("download", false)) {
+            getImageFromDownload(chapter.belongTo, chapter.chapterId)
+        } else {
+            getImageFromServer(chapter.chapterId)
+        }
+    }
 
-        // Set up the user interaction to manually show or hide the system UI.
-        //zoomRecyclerView.setOnClickListener { toggle() }
+    private fun getImageFromDownload(comicId: Long, chapterId: Long) {
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
+    }
 
-        //dummy_button.setOnTouchListener(mDelayHideTouchListener)
+    private fun getImageFromServer(chapterId: Long) {
+        val address =
+            "http://app.u17.com/v3/appV3_3/android/phone/comic/chapterNew?" +
+                    "come_from=xiaomi" +
+                    "&serialNumber=7de42d2e" +
+                    "&v=4500102&model=MI+6" +
+                    "&chapter_id=$chapterId" +
+                    "&android_id=f5c9b6c9284551ad"
+        sendOkHttpRequest(address, object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("TAG", "Failed - 获取漫画图片")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val imageList = mutableListOf<String>()
+                imageList.addAll(handleImageListResponse(response.body()!!.string()))
+                val adapter =
+                    ImageAdapter(imageList, this@ReaderActivity)
+                adapter.onTouchListener =
+                    object : ImageAdapter.OnTouchListener {
+                        override fun onTouch() {
+                            toggle()
+                        }
+                    }
+                this@ReaderActivity.runOnUiThread {
+                    zoomRecyclerView.let {
+                        it.adapter = adapter
+                        it.layoutManager = LinearLayoutManager(this@ReaderActivity)
+                        it.isEnableScale = true
+                    }
+                }
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -100,41 +137,6 @@ class ReaderActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun getImageList(chapterId: Long) {
-        val address =
-            "http://app.u17.com/v3/appV3_3/android/phone/comic/chapterNew?" +
-                    "come_from=xiaomi" +
-                    "&serialNumber=7de42d2e" +
-                    "&v=4500102&model=MI+6" +
-                    "&chapter_id=$chapterId" +
-                    "&android_id=f5c9b6c9284551ad"
-        val imageList = mutableListOf<String>()
-        sendOkHttpRequest(address, object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d("TAG", "Failed - 获取漫画图片")
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                imageList.addAll(handleImageListResponse(response.body()!!.string()))
-                val adapter =
-                    ImageAdapter(imageList, this@ReaderActivity)
-                adapter.onTouchListener =
-                    object : ImageAdapter.OnTouchListener {
-                        override fun onTouch() {
-                            toggle()
-                        }
-                    }
-                this@ReaderActivity.runOnUiThread {
-                    zoomRecyclerView.let {
-                        it.adapter = adapter
-                        it.layoutManager = LinearLayoutManager(this@ReaderActivity)
-                        it.isEnableScale = true
-                    }
-                }
-            }
-        })
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

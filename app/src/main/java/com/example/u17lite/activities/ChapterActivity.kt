@@ -27,6 +27,7 @@ import java.io.IOException
 
 class ChapterActivity : AppCompatActivity() {
 
+    var download: Boolean? = null
     lateinit var comic: Comic
     lateinit var comicDao: ComicDao
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,18 +38,26 @@ class ChapterActivity : AppCompatActivity() {
             setDisplayHomeAsUpEnabled(true)
             title = "漫画详情"
         }
-        Thread {
-            comicDao = getDatabase(this).comicDao()
-        }.start()
-        comic = intent.getParcelableExtra<Comic>("comic")
-        getChapterList(comic.comicId)
+        comicDao = getDatabase(this).comicDao()
+
+        comic = intent.getParcelableExtra("comic")
+        if (intent.getStringExtra("type") == "download") {
+            download = true
+            getChapterListFromFile(comic.comicId)
+        } else {
+            getChapterListFromServer(comic.comicId)
+        }
         Glide.with(this).load(comic.coverURL).into(imgCover)
         tvTitle.text = comic.title
         tvAuthor.text = comic.author
         tvDescription.text = comic.description
     }
 
-    private fun getChapterList(comicId: Long) {
+    private fun getChapterListFromFile(comicId: Long) {
+
+    }
+
+    private fun getChapterListFromServer(comicId: Long) {
         val address =
             "http://app.u17.com/v3/appV3_3/android/phone/comic/detail_static_new?" +
                     "come_from=xiaomi" +
@@ -67,6 +76,7 @@ class ChapterActivity : AppCompatActivity() {
                 val res = response.body()!!.string()
                 comic.lastUpdateTime = handleSubscribeResponse(res)
                 chapterList.addAll(handleChapterListResponse(res))
+                chapterList.forEach { it.belongTo = comicId }
                 val adapter =
                     ChapterAdapter(chapterList, this@ChapterActivity)
                 this@ChapterActivity.runOnUiThread {

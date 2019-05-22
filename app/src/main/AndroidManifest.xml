@@ -16,7 +16,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,InnerclassSeparator">
-        <activity android:name=".activities.TestActivity"></activity>
+        <activity android:name=".activities.DownloadActivity"></activity>
+        <activity android:name=".activities.SubscribeActivity" />
+        <activity android:name=".activities.TestActivity" />
         <activity
             android:name=".activities.ReaderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
