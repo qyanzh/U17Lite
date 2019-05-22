@@ -10,6 +10,4 @@ class Chapter(
     val name: String,
     val smallCoverURL: String,
     val publishTime: Long
-) {
-
-}
+)

@@ -22,6 +22,7 @@ fun sendOkHttpRequest(address: String, callback: okhttp3.Callback) {
     client.newCall(request).enqueue(callback)
 }
 
+
 fun handleSubscribeResponse(response: String): Long {
     if (response.isNotEmpty()) {
         try {
@@ -35,6 +36,7 @@ fun handleSubscribeResponse(response: String): Long {
     }
     return 0
 }
+
 fun handleImageListResponse(response: String): List<String> {
     if (response.isNotEmpty()) {
         try {

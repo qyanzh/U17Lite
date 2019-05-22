@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -11,7 +12,10 @@ import com.example.u17lite.R
 import com.example.u17lite.adapters.ChapterAdapter
 import com.example.u17lite.dataBeans.Chapter
 import com.example.u17lite.dataBeans.Comic
+import com.example.u17lite.dataBeans.ComicDao
+import com.example.u17lite.dataBeans.getDatabase
 import com.example.u17lite.handleChapterListResponse
+import com.example.u17lite.handleSubscribeResponse
 import com.example.u17lite.sendOkHttpRequest
 import kotlinx.android.synthetic.main.activity_chapter.*
 import kotlinx.android.synthetic.main.content_comic.*
@@ -23,7 +27,8 @@ import java.io.IOException
 
 class ChapterActivity : AppCompatActivity() {
 
-
+    lateinit var comic: Comic
+    lateinit var comicDao: ComicDao
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chapter)
@@ -32,7 +37,10 @@ class ChapterActivity : AppCompatActivity() {
             setDisplayHomeAsUpEnabled(true)
             title = "漫画详情"
         }
-        val comic = intent.getParcelableExtra<Comic>("comic")
+        Thread {
+            comicDao = getDatabase(this).comicDao()
+        }.start()
+        comic = intent.getParcelableExtra<Comic>("comic")
         getChapterList(comic.comicId)
         Glide.with(this).load(comic.coverURL).into(imgCover)
         tvTitle.text = comic.title
@@ -56,7 +64,9 @@ class ChapterActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                chapterList.addAll(handleChapterListResponse(response.body()!!.string()))
+                val res = response.body()!!.string()
+                comic.lastUpdateTime = handleSubscribeResponse(res)
+                chapterList.addAll(handleChapterListResponse(res))
                 val adapter =
                     ChapterAdapter(chapterList, this@ChapterActivity)
                 this@ChapterActivity.runOnUiThread {
@@ -80,19 +90,48 @@ class ChapterActivity : AppCompatActivity() {
                 TODO("下载章节")
             }
             R.id.star -> {
-                TODO("订阅本漫画")
+                Thread {
+                    comicDao.find(comic.comicId)?.let {
+                        if (it.isSubscribed) {
+                            runOnUiThread {
+                                Toast.makeText(this, "取消订阅", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            runOnUiThread {
+                                Toast.makeText(this, "订阅成功", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        comicDao.update(it.apply { isSubscribed = !isSubscribed })
+                    } ?: let {
+                        comicDao.insert(comic.apply {
+                            isSubscribed = true
+                        })
+                        runOnUiThread {
+                            Toast.makeText(this, "订阅成功", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    invalidateOptionsMenu()
+                }.start()
             }
         }
         return super.onOptionsItemSelected(item)
     }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_chapter, menu)
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        //menu?.getItem(0)?.setIcon(R.drawable.ic_star_black_24dp)
+        Log.d("TAG", "onPrepareOptionsMenu")
+        Thread {
+            comicDao.find(comic.comicId)?.let {
+                runOnUiThread {
+                    menu?.getItem(0)?.setIcon(
+                        if (it.isSubscribed) R.drawable.ic_star_black_24dp else R.drawable.ic_star_border_black_24dp
+                    )
+                }
+            }
+        }.start()
         return super.onPrepareOptionsMenu(menu)
     }
 }

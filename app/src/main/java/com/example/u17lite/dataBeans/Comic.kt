@@ -11,24 +11,24 @@ class Comic(
     var title: String,
     val author: String,
     val description: String,
-    val coverURL: String
+    val coverURL: String,
+    var lastUpdateTime: Long = 0,
+    var isSubscribed: Boolean = false,
+    var isDownloaded: Boolean = false
 ) : Parcelable {
-
-
-    var lastUpdateTime: Long = 0
-    var isSubscribed = true
-    var isDownloaded = true
-
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString()
-    ) {
-        lastUpdateTime = parcel.readLong()
-        isSubscribed = parcel.readByte() != 0.toByte()
-        isDownloaded = parcel.readByte() != 0.toByte()
+        parcel.readString(),
+        parcel.readLong(),
+        parcel.readByte() != 0.toByte(),
+        parcel.readByte() != 0.toByte()
+    )
+
+    override fun toString(): String {
+        return "title:$title"
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -55,5 +55,6 @@ class Comic(
             return arrayOfNulls(size)
         }
     }
+
 
 }
