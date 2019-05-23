@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="No.1 海贼王"
+            android:text=" "
             android:textColor="@android:color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@+id/imgCover"
@@ -42,7 +42,7 @@
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:maxLines="3"
-            android:text="镇魂街乃吸纳亡灵镇压恶灵之地。这是一个人灵共存的世界，但不是每个人都能进入镇魂街，只有拥有守护灵的寄灵人才可进入。夏铃原本是一名普通的大学实习生，但一次偶然导致她的人生从此不再平凡……在这个充满恶灵的世界，你能与你的守护灵携手生存下去吗？"
+            android:text=" "
             app:layout_constraintBottom_toBottomOf="@+id/imgCover"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="尾田荣一郎"
+            android:text=" "
             app:layout_constraintStart_toStartOf="@+id/tvTitle"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
     </androidx.constraintlayout.widget.ConstraintLayout>

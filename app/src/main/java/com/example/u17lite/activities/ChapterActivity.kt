@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.u17lite.R
 import com.example.u17lite.adapters.ChapterAdapter
 import com.example.u17lite.dataBeans.Chapter
@@ -18,12 +17,11 @@ import com.example.u17lite.handleChapterListResponse
 import com.example.u17lite.handleSubscribeResponse
 import com.example.u17lite.sendOkHttpRequest
 import kotlinx.android.synthetic.main.activity_chapter.*
-import kotlinx.android.synthetic.main.content_comic.*
-import kotlinx.android.synthetic.main.rcv_item_comic.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
+
 
 class ChapterActivity : AppCompatActivity() {
 
@@ -41,16 +39,15 @@ class ChapterActivity : AppCompatActivity() {
         comicDao = getDatabase(this).comicDao()
 
         comic = intent.getParcelableExtra("comic")
-        if (intent.getStringExtra("type") == "download") {
-            download = true
-            getChapterListFromFile(comic.comicId)
-        } else {
-            getChapterListFromServer(comic.comicId)
-        }
-        Glide.with(this).load(comic.coverURL).into(imgCover)
-        tvTitle.text = comic.title
-        tvAuthor.text = comic.author
-        tvDescription.text = comic.description
+        Thread {
+            comicDao.insert(comic)
+            if (intent.getStringExtra("type") == "download") {
+                download = true
+                getChapterListFromFile(comic.comicId)
+            } else {
+                getChapterListFromServer(comic.comicId)
+            }
+        }.start()
     }
 
     private fun getChapterListFromFile(comicId: Long) {
@@ -78,12 +75,10 @@ class ChapterActivity : AppCompatActivity() {
                 chapterList.addAll(handleChapterListResponse(res))
                 chapterList.forEach { it.belongTo = comicId }
                 val adapter =
-                    ChapterAdapter(chapterList, this@ChapterActivity)
+                    ChapterAdapter(comicId, chapterList, this@ChapterActivity)
                 this@ChapterActivity.runOnUiThread {
                     rcvChapterList.let {
                         it.adapter = adapter
-                        it.isNestedScrollingEnabled = false
-                        it.setHasFixedSize(true)
                         it.layoutManager = LinearLayoutManager(this@ChapterActivity)
                     }
                 }
@@ -126,6 +121,7 @@ class ChapterActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_chapter, menu)
         return true
