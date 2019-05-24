@@ -35,14 +35,12 @@ class ImageAdapter(val list: List<String>, activity: Activity) :
         )
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ViewHolder) {
             Glide.with(holder.itemView.context).load(list[position]).into(holder.imgComic)
         }
     }
+
+    override fun getItemCount() = list.size
 
 }

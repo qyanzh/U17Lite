@@ -32,25 +32,8 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    companion object {
-        private const val CHECK_UPDATE_TIME = 10 * 60 * 1000L
-        private const val prefix =
-            "http://app.u17.com/v3/appV3_3/android/phone/list/getRankComicList?" +
-                    "period=total&type=2"
-        private const val postfix = "&come_from=xiaomi" +
-                "&serialNumber=7de42d2e" +
-                "&v=450010" +
-                "&model=MI+6" +
-                "&android_id=f5c9b6c9284551ad"
-        private const val SUBSCRIBE_CHANNEL_ID = "Subscribe"
-        private const val DOWNLOAD_CHANNEL_ID = "Download"
-
-    }
-
-    lateinit var comicDao: ComicDao
     var isForeground = false
-
-
+    lateinit var comicDao: ComicDao
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -80,6 +63,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -156,7 +140,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         notificationManager.createNotificationChannel(downloadChannel)
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         // Get the SearchView and set the searchable configuration
@@ -169,6 +152,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         return true
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
@@ -205,6 +189,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             super.onBackPressed()
         }
+    }
+
+    companion object {
+        private const val CHECK_UPDATE_TIME = 10 * 60 * 1000L
+        private const val prefix =
+            "http://app.u17.com/v3/appV3_3/android/phone/list/getRankComicList?" +
+                    "period=total&type=2"
+        private const val postfix = "&come_from=xiaomi" +
+                "&serialNumber=7de42d2e" +
+                "&v=450010" +
+                "&model=MI+6" +
+                "&android_id=f5c9b6c9284551ad"
+        private const val SUBSCRIBE_CHANNEL_ID = "Subscribe"
+        private const val DOWNLOAD_CHANNEL_ID = "Download"
+
     }
 
 }

@@ -21,33 +21,19 @@ import kotlinx.android.synthetic.main.rcv_item_load_more.view.*
 
 class ComicAdapter(var comicList: MutableList<Comic>, var activity: Activity? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var hasMore = true
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is LoadMoreViewHolder) {
-            if (activity is MainActivity || activity is SearchResultActivity) {
-                if (itemCount == 1) holder.tvLoading.visibility = View.GONE
-                if (!hasMore) {
-                    Log.d("TAG", "what")
-                    holder.tvLoading.text = "到底了"
-                    holder.progressBar.visibility = View.GONE
-                }
-            } else {
-                holder.tvLoading.visibility = View.GONE
-                holder.progressBar.visibility = View.GONE
-            }
-        } else if (holder is ComicViewHolder) {
-            val comic = comicList[position]
-            Glide.with(holder.view).load(comic.coverURL).into(holder.imgCover)
-            holder.apply {
-                textTitle.text = comic.title
-                textAuthor.text = comic.author
-                textDescription.text = comic.description
-            }
-        }
-
+    class ComicViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+        var imgCover = view.imgCover
+        var textTitle = view.tvTitle
+        var textAuthor = view.tvAuthor
+        var textDescription = view.tvDescription
     }
 
+    class LoadMoreViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+        var tvLoading = view.tvLoading
+        var progressBar = view.progressBar
+    }
+
+    var hasMore = true
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == 1) {
             return LoadMoreViewHolder(
@@ -84,26 +70,36 @@ class ComicAdapter(var comicList: MutableList<Comic>, var activity: Activity? = 
         }
     }
 
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is LoadMoreViewHolder) {
+            if (activity is MainActivity || activity is SearchResultActivity) {
+                if (itemCount == 1) holder.tvLoading.visibility = View.GONE
+                if (!hasMore) {
+                    Log.d("TAG", "what")
+                    holder.tvLoading.text = "到底了"
+                    holder.progressBar.visibility = View.GONE
+                }
+            } else {
+                holder.tvLoading.visibility = View.GONE
+                holder.progressBar.visibility = View.GONE
+            }
+        } else if (holder is ComicViewHolder) {
+            val comic = comicList[position]
+            Glide.with(holder.view).load(comic.coverURL).into(holder.imgCover)
+            holder.apply {
+                textTitle.text = comic.title
+                textAuthor.text = comic.author
+                textDescription.text = comic.description
+            }
+        }
+
+    }
+
     override fun getItemCount() = comicList.size + 1
 
-
-    override fun getItemViewType(position: Int): Int {
-        return when (position) {
-            itemCount - 1 -> 1
-            else -> 0
-        }
-    }
-
-    class ComicViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        var imgCover = view.imgCover
-        var textTitle = view.tvTitle
-        var textAuthor = view.tvAuthor
-        var textDescription = view.tvDescription
-    }
-
-    class LoadMoreViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        var tvLoading = view.tvLoading
-        var progressBar = view.progressBar
+    override fun getItemViewType(position: Int) = when (position) {
+        itemCount - 1 -> 1
+        else -> 0
     }
 
 }

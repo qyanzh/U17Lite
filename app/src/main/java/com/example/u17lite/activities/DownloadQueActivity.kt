@@ -66,15 +66,15 @@ class DownloadQueActivity : AppCompatActivity() {
         registerReceiver(receiver, filter)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(receiver)
     }
 }

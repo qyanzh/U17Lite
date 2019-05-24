@@ -25,10 +25,6 @@ class DownloadAdapter(val list: MutableList<Chapter>) :
         )
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val chapter = list[position]
         if (holder is ViewHolder) {
@@ -36,4 +32,6 @@ class DownloadAdapter(val list: MutableList<Chapter>) :
             holder.status.text = if (position == 0) "正在下载" else "正在等待"
         }
     }
+
+    override fun getItemCount() = list.size
 }

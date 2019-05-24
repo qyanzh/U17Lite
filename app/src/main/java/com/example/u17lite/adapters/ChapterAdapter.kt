@@ -24,14 +24,16 @@ class ChapterAdapter(
     private val activity: Activity
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    init {
-        Log.d("TAG", "init")
+
+    class ChapterViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+        var chapterName = view.tvName
+        var coverImg = view.imgCover
+        var publishTime = view.tvPublishTime
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         Log.d("TAG", "oncreate")
         if (viewType == 1) {
-            Log.d("TAG", "1")
             val view =
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.rcv_item_chapter, parent, false)
@@ -54,21 +56,9 @@ class ChapterAdapter(
                 }
             }
         } else {
-            Log.d("TAG", "2")
             val view =
                 LayoutInflater.from(parent.context).inflate(R.layout.rcv_item_comic, parent, false)
             return ComicAdapter.ComicViewHolder(view)
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return chapterList.size + 1
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return when (position) {
-            0 -> 0
-            else -> 1
         }
     }
 
@@ -98,9 +88,10 @@ class ChapterAdapter(
         }
     }
 
-    class ChapterViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        var chapterName = view.tvName
-        var coverImg = view.imgCover
-        var publishTime = view.tvPublishTime
+    override fun getItemCount() = chapterList.size + 1
+
+    override fun getItemViewType(position: Int) = when (position) {
+        0 -> 0
+        else -> 1
     }
 }

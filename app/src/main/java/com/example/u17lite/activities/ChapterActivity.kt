@@ -27,6 +27,7 @@ class ChapterActivity : AppCompatActivity() {
     lateinit var comicDao: ComicDao
     lateinit var chapterDao: ChapterDao
     lateinit var downloadDao: DownloadDao
+    val chapterList = mutableListOf<Chapter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +41,9 @@ class ChapterActivity : AppCompatActivity() {
         chapterDao = getDatabase(this).chapterDao()
         downloadDao = getDatabase(this).downloadDao()
         comic = intent.getParcelableExtra("comic")
+        if (!isWebConnect(this) && intent.getStringExtra("type") != "download") {
+            Toast.makeText(this, "请检查网络连接", Toast.LENGTH_SHORT).show()
+        }
         Thread {
             if (intent.getStringExtra("type") == "download") {
                 download = true
@@ -50,6 +54,7 @@ class ChapterActivity : AppCompatActivity() {
             }
         }.start()
     }
+
 
     private fun getChapterListFromFile(comicId: Long) {
         File(getExternalFilesDir("imgs").absolutePath + File.separator + comicId).list()
@@ -102,9 +107,6 @@ class ChapterActivity : AppCompatActivity() {
             }
         })
     }
-
-
-    val chapterList = mutableListOf<Chapter>()
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
