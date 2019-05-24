@@ -8,6 +8,14 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 
+interface DownloadListener {
+    fun onProgress(progress: Int)
+    fun onSuccess()
+    fun onFailed()
+    fun onPaused()
+    fun onCanceled()
+}
+
 fun isWebConnect(context: Context): Boolean {
     val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     manager.activeNetworkInfo?.let {
@@ -37,6 +45,18 @@ fun handleSubscribeResponse(response: String): Long {
     return 0
 }
 
+fun handleDownloadUrlResponse(response: String): String {
+    if (response.isNotEmpty()) {
+        try {
+            var jsonObject = JSONObject(response)
+            jsonObject = jsonObject.getJSONObject("data").getJSONObject("returnData")
+            return jsonObject.getString("zip_file_high")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    return String()
+}
 fun handleImageListResponse(response: String): List<String> {
     if (response.isNotEmpty()) {
         try {

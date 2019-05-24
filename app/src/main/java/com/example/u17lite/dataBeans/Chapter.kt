@@ -12,14 +12,16 @@ class Chapter(
     val name: String,
     val smallCoverURL: String,
     val publishTime: Long,
-    var belongTo: Long = 0
+    var belongTo: Long = 0,
+    var comicName: String = ""
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
         parcel.readLong(),
-        parcel.readLong()
+        parcel.readLong(),
+        parcel.readString()
     ) {
     }
 
@@ -29,6 +31,7 @@ class Chapter(
         parcel.writeString(smallCoverURL)
         parcel.writeLong(publishTime)
         parcel.writeLong(belongTo)
+        parcel.writeString(comicName)
     }
 
     override fun describeContents(): Int {
@@ -44,4 +47,5 @@ class Chapter(
             return arrayOfNulls(size)
         }
     }
+
 }

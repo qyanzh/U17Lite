@@ -37,8 +37,8 @@ class ChapterAdapter(
                     .inflate(R.layout.rcv_item_chapter, parent, false)
             return ChapterViewHolder(view).apply {
                 view.setOnClickListener {
-                    val chapter = chapterList[adapterPosition]
-                    if (isWebConnect(activity)) {
+                    val chapter = chapterList[adapterPosition - 1]
+                    if (isWebConnect(activity) || (activity as ChapterActivity).download!!) {
                         view.context.startActivity(
                             Intent(
                                 view.context,
@@ -49,6 +49,7 @@ class ChapterAdapter(
                             })
                     } else {
                         Toast.makeText(activity, "请检查网络连接", Toast.LENGTH_SHORT).show()
+
                     }
                 }
             }
@@ -61,7 +62,7 @@ class ChapterAdapter(
     }
 
     override fun getItemCount(): Int {
-        return chapterList.size
+        return chapterList.size + 1
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -72,8 +73,9 @@ class ChapterAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        Log.d("TAG", "" + chapterList.size)
         if (holder is ChapterViewHolder) {
-            val chapter = chapterList[position]
+            val chapter = chapterList[position - 1]
             holder.chapterName.text = chapter.name
             Glide.with(holder.view).load(chapter.smallCoverURL).into(holder.coverImg)
             holder.publishTime.text =

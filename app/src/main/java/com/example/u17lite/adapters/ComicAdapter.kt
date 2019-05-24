@@ -65,12 +65,14 @@ class ComicAdapter(var comicList: MutableList<Comic>, var activity: Activity? = 
                         it.putExtra("type", if (activity is DownloadActivity) "download" else null)
                     }
                     var options: ActivityOptionsCompat? = null
-                    activity?.run {
-                        options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            activity!!,
-                            view,
-                            ViewCompat.getTransitionName(view)!!
-                        )
+                    if (activity !is DownloadActivity) {
+                        activity?.run {
+                            options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                activity!!,
+                                view,
+                                ViewCompat.getTransitionName(view)!!
+                            )
+                        }
                     }
                     if (options != null) {
                         view.context.startActivity(intent, options!!.toBundle())

@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -16,7 +16,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,InnerclassSeparator">
-        <activity android:name=".activities.DownloadActivity"></activity>
+        <activity android:name=".activities.DownloadQueActivity"></activity>
+
+        <service
+            android:name=".services.DownloadService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".activities.DownloadActivity" />
         <activity android:name=".activities.SubscribeActivity" />
         <activity android:name=".activities.TestActivity" />
         <activity

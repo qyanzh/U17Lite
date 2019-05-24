@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_reader.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import java.io.File
 import java.io.IOException
 
 /**
@@ -78,7 +79,32 @@ class ReaderActivity : AppCompatActivity() {
     }
 
     private fun getImageFromDownload(comicId: Long, chapterId: Long) {
-
+        val imageList = mutableListOf<String>()
+        File(
+            getExternalFilesDir("imgs").absolutePath + File.separator + comicId
+                    + File.separator + chapterId
+        ).listFiles().let {
+            Log.d("TAG", "$comicId $chapterId")
+            it.sort()
+            it.forEach { img ->
+                imageList.add(img.absolutePath)
+            }
+        }
+        val adapter =
+            ImageAdapter(imageList, this@ReaderActivity)
+        adapter.onTouchListener =
+            object : ImageAdapter.OnTouchListener {
+                override fun onTouch() {
+                    toggle()
+                }
+            }
+        this@ReaderActivity.runOnUiThread {
+            zoomRecyclerView.let {
+                it.adapter = adapter
+                it.layoutManager = LinearLayoutManager(this@ReaderActivity)
+                it.isEnableScale = true
+            }
+        }
     }
 
     private fun getImageFromServer(chapterId: Long) {

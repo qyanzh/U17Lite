@@ -21,6 +21,7 @@ import com.example.u17lite.dataBeans.getDatabase
 import com.example.u17lite.fragments.ComicListFragment
 import com.example.u17lite.handleSubscribeResponse
 import com.example.u17lite.sendOkHttpRequest
+import com.example.u17lite.services.DownloadService
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -41,7 +42,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 "&v=450010" +
                 "&model=MI+6" +
                 "&android_id=f5c9b6c9284551ad"
-        private const val CHANNEL_ID = "Subscribe"
+        private const val SUBSCRIBE_CHANNEL_ID = "Subscribe"
+        private const val DOWNLOAD_CHANNEL_ID = "Download"
 
     }
 
@@ -57,6 +59,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         comicDao = getDatabase(this).comicDao()
 
         runSubscribeThread()
+        startService(Intent(this, DownloadService::class.java))
 
         ActionBarDrawerToggle(
             this,
@@ -81,6 +84,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onDestroy() {
         super.onDestroy()
         isForeground = false
+        stopService(Intent(this, DownloadService::class.java))
     }
 
     private fun runSubscribeThread() {
@@ -110,7 +114,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 it.lastUpdateTime = newLastUpdateTime
                                 comicDao.update(it)
                                 val builder =
-                                    NotificationCompat.Builder(this@MainActivity, CHANNEL_ID)
+                                    NotificationCompat.Builder(
+                                        this@MainActivity,
+                                        SUBSCRIBE_CHANNEL_ID
+                                    )
                                         .setSmallIcon(R.drawable.ic_star_black_24dp)
                                         .setContentText("订阅的漫画更新啦")
                                         .setContentTitle(it.title)
@@ -135,13 +142,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val name = "订阅通知"
         val descriptionText = "漫画更新通知"
         val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+        val subscribeChannel = NotificationChannel(SUBSCRIBE_CHANNEL_ID, name, importance).apply {
             description = descriptionText
         }
         // Register the channel with the system
         val notificationManager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+        notificationManager.createNotificationChannel(subscribeChannel)
+        val notImportant = NotificationManager.IMPORTANCE_MIN
+        val downloadChannel = NotificationChannel(DOWNLOAD_CHANNEL_ID, "下载", notImportant).apply {
+            description = "下载进度通知"
+        }
+        notificationManager.createNotificationChannel(downloadChannel)
     }
 
 
@@ -174,6 +186,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_download -> {
+                startActivity(Intent(this, DownloadActivity::class.java))
             }
             R.id.nav_star -> {
                 startActivity(Intent(this, SubscribeActivity::class.java))
@@ -193,4 +206,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             super.onBackPressed()
         }
     }
+
 }

@@ -2,12 +2,14 @@ package com.example.u17lite.activities
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.u17lite.R
 import com.example.u17lite.adapters.ComicAdapter
 import com.example.u17lite.dataBeans.Comic
 import com.example.u17lite.dataBeans.getDatabase
+import com.example.u17lite.isWebConnect
 import kotlinx.android.synthetic.main.activity_subscribe.*
 
 class SubscribeActivity : AppCompatActivity() {
@@ -18,6 +20,9 @@ class SubscribeActivity : AppCompatActivity() {
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.title = "订阅"
+        }
+        if (!isWebConnect(this)) {
+            Toast.makeText(this, "请检查网络连接", Toast.LENGTH_SHORT).show()
         }
         val list = mutableListOf<Comic>()
         Thread {
