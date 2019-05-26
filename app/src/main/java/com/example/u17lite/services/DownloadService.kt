@@ -32,6 +32,7 @@ class DownloadService : Service() {
     lateinit var chapterDao: ChapterDao
     var networkConnected = true
 
+    var taskSize = 0
     // Handler that receives messages from the thread
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
@@ -40,11 +41,17 @@ class DownloadService : Service() {
             comicDao = db.comicDao()
             chapterDao = db.chapterDao()
             downloadDao = db.downloadDao()
-            while (networkConnected) {
-                Log.d("MyService", "while")
-                downloadDao.getNext()?.let {
-                    downloadFile(it)
-                } ?: return
+            taskSize = downloadDao.getAll().size
+            if (taskSize > 0) {
+                startForeground(1, getNotification("正在下载漫画..", 0))
+                while (networkConnected) {
+                    Log.d("MyService", "while")
+                    downloadDao.getNext()?.let {
+                        downloadFile(it)
+                    } ?: break
+                }
+                getNotificationManager().notify(1, getNotification("下载完成", -1))
+                stopForeground(false)
             }
         }
     }
@@ -100,8 +107,6 @@ class DownloadService : Service() {
             } else if (contentLength == downloadedLength) {
                 return onPostExecute(TYPE_SUCCESS)
             }
-            startForeground(1, getNotification("正在下载漫画..", 0))
-            Thread.sleep(10000)
             val client = OkHttpClient()
             val request = Request.Builder()
                 .addHeader("RANGE", "bytes=$downloadedLength-")
@@ -121,8 +126,8 @@ class DownloadService : Service() {
                     else -> {
                         total += len
                         savedFile.write(b, 0, len)
-                        val progress = ((total + downloadedLength) * 100 / contentLength).toInt()
-                        onProgressUpdate(progress)
+//                        val progress = ((total + downloadedLength) * 100 / contentLength).toInt()
+//                        onProgressUpdate(progress)
                     }
                 }
                 len = inputStream.read(b)
@@ -146,13 +151,13 @@ class DownloadService : Service() {
         return onPostExecute(TYPE_FAILED)
     }
 
-    fun onProgressUpdate(vararg values: Int?) {
-        val progress = values[0]
-        if (progress!! > lastProgress) {
-            onPostExecute(TYPE_PROGRESS)
-            lastProgress = progress
-        }
-    }
+//    fun onProgressUpdate(vararg values: Int?) {
+//        val progress = values[0]
+//        if (progress!! > lastProgress) {
+//            onPostExecute(TYPE_PROGRESS)
+//            lastProgress = progress
+//        }
+//    }
 
 
     private fun onPostExecute(type: Int) {
@@ -208,8 +213,10 @@ class DownloadService : Service() {
             downloadDao.delete(item)
             sendBroadcast(Intent(RECIEVE).putExtra("msg", "success"))
         }
-        stopForeground(true)
-        getNotificationManager().notify(1, getNotification("下载成功", -1))
+        getNotificationManager().notify(
+            1,
+            getNotification("正在下载漫画...", 100 - downloadDao.getAll().size * 100 / taskSize)
+        )
 //        Toast.makeText(this, "Download Success", Toast.LENGTH_SHORT).show()
     }
 

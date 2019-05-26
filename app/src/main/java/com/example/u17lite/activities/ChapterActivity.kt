@@ -134,6 +134,10 @@ class ChapterActivity : AppCompatActivity() {
                         }
 
                         override fun onResponse(call: Call, response: Response) {
+                            runOnUiThread {
+                                Toast.makeText(this@ChapterActivity, "已添加到下载列表", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                             val url = handleDownloadUrlResponse(response.body()!!.string())
                             downloadDao.insert(
                                 DownloadItem(

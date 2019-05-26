@@ -16,6 +16,8 @@ import com.example.u17lite.dataBeans.Chapter
 import com.example.u17lite.dataBeans.getDatabase
 import com.example.u17lite.isWebConnect
 import kotlinx.android.synthetic.main.rcv_item_chapter.view.*
+import kotlinx.android.synthetic.main.rcv_item_chapter.view.imgCover
+import kotlinx.android.synthetic.main.rcv_item_comic.view.*
 import java.text.SimpleDateFormat
 
 class ChapterAdapter(
@@ -58,8 +60,15 @@ class ChapterAdapter(
         } else {
             val view =
                 LayoutInflater.from(parent.context).inflate(R.layout.rcv_item_comic, parent, false)
-            return ComicAdapter.ComicViewHolder(view)
+            return ChapterComicViewHolder(view)
         }
+    }
+
+    private class ChapterComicViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        var imgCover = view.imgCover
+        var textTitle = view.tvTitle
+        var textAuthor = view.tvAuthor
+        var textDescription = view.tvDescription
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -70,7 +79,7 @@ class ChapterAdapter(
             Glide.with(holder.view).load(chapter.smallCoverURL).into(holder.coverImg)
             holder.publishTime.text =
                 SimpleDateFormat("yyyy-MM-dd").format(chapter.publishTime * 1000)
-        } else if (holder is ComicAdapter.ComicViewHolder) {
+        } else if (holder is ChapterComicViewHolder) {
             Thread {
                 val comic = getDatabase(activity).comicDao().find(comicId)
                 activity.runOnUiThread {

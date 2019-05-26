@@ -45,6 +45,31 @@ fun handleSubscribeResponse(response: String): Long {
     return 0
 }
 
+fun handleChapterIdsResponse(response: String): List<Long> {
+    if (response.isNotEmpty()) {
+        try {
+            var jsonObject = JSONObject(response)
+            jsonObject = jsonObject.getJSONObject("data").getJSONObject("returnData")
+            val jsonArray = jsonObject.getJSONArray("chapter_list")
+            val size = jsonArray.length()
+            val list = mutableListOf<Long>()
+            for (i in 0 until size) {
+                jsonArray.getJSONObject(i).let {
+                    if (it.getInt("type") == 0) {
+                        list.add(
+                            it.getLong("chapter_id")
+                        )
+                    }
+                }
+            }
+            return list
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    return listOf()
+}
+
 fun handleDownloadUrlResponse(response: String): String {
     if (response.isNotEmpty()) {
         try {
@@ -57,6 +82,7 @@ fun handleDownloadUrlResponse(response: String): String {
     }
     return String()
 }
+
 fun handleImageListResponse(response: String): List<String> {
     if (response.isNotEmpty()) {
         try {

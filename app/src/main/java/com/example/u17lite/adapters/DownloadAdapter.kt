@@ -34,4 +34,6 @@ class DownloadAdapter(val list: MutableList<Chapter>) :
     }
 
     override fun getItemCount() = list.size
+
 }
+

@@ -5,9 +5,12 @@ import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.NO_ID
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.selection.ItemDetailsLookup
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.u17lite.R
@@ -21,11 +24,29 @@ import kotlinx.android.synthetic.main.rcv_item_load_more.view.*
 
 class ComicAdapter(var comicList: MutableList<Comic>, var activity: Activity? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    class ComicViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+    init {
+        setHasStableIds(true)
+    }
+
+    var tracker: SelectionTracker<Long>? = null
+
+    override fun getItemId(position: Int): Long =
+        if (position < comicList.size) comicList[position].comicId else NO_ID.toLong()
+
+    inner class ComicViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
         var imgCover = view.imgCover
         var textTitle = view.tvTitle
         var textAuthor = view.tvAuthor
         var textDescription = view.tvDescription
+        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
+            object : ItemDetailsLookup.ItemDetails<Long>() {
+                override fun getSelectionKey(): Long? = comicList[adapterPosition].comicId
+                override fun getPosition(): Int = adapterPosition
+            }
+
+        fun bind(isActive: Boolean) {
+            view.isActivated = isActive
+        }
     }
 
     class LoadMoreViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
@@ -85,6 +106,9 @@ class ComicAdapter(var comicList: MutableList<Comic>, var activity: Activity? = 
             }
         } else if (holder is ComicViewHolder) {
             val comic = comicList[position]
+            tracker?.let {
+                holder.bind(it.isSelected(comic.comicId))
+            }
             Glide.with(holder.view).load(comic.coverURL).into(holder.imgCover)
             holder.apply {
                 textTitle.text = comic.title
@@ -101,5 +125,6 @@ class ComicAdapter(var comicList: MutableList<Comic>, var activity: Activity? = 
         itemCount - 1 -> 1
         else -> 0
     }
+
 
 }
