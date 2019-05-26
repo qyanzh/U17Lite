@@ -7,7 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.recyclerview.selection.ItemDetailsLookup
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.NO_ID
 import com.bumptech.glide.Glide
 import com.example.u17lite.R
 import com.example.u17lite.activities.ChapterActivity
@@ -26,11 +29,28 @@ class ChapterAdapter(
     private val activity: Activity
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    init {
+        setHasStableIds(true)
+    }
 
-    class ChapterViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+    var tracker: SelectionTracker<Long>? = null
+
+    override fun getItemId(position: Int): Long =
+        if (position in 1..chapterList.size) chapterList[position - 1].chapterId else NO_ID
+
+    inner class ChapterViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
         var chapterName = view.tvName
         var coverImg = view.imgCover
         var publishTime = view.tvPublishTime
+        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
+            object : ItemDetailsLookup.ItemDetails<Long>() {
+                override fun getSelectionKey(): Long? = chapterList[adapterPosition - 1].chapterId
+                override fun getPosition(): Int = adapterPosition
+            }
+
+        fun bind(isActive: Boolean) {
+            view.isActivated = isActive
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -53,7 +73,6 @@ class ChapterAdapter(
                             })
                     } else {
                         Toast.makeText(activity, "请检查网络连接", Toast.LENGTH_SHORT).show()
-
                     }
                 }
             }
@@ -72,13 +91,15 @@ class ChapterAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d("TAG", "" + chapterList.size)
         if (holder is ChapterViewHolder) {
             val chapter = chapterList[position - 1]
             holder.chapterName.text = chapter.name
             Glide.with(holder.view).load(chapter.smallCoverURL).into(holder.coverImg)
             holder.publishTime.text =
                 SimpleDateFormat("yyyy-MM-dd").format(chapter.publishTime * 1000)
+            tracker?.let {
+                holder.bind(it.isSelected(chapter.chapterId))
+            }
         } else if (holder is ChapterComicViewHolder) {
             Thread {
                 val comic = getDatabase(activity).comicDao().find(comicId)

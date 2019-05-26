@@ -7,9 +7,4 @@
         android:id="@+id/star"
         android:title="订阅"
         app:showAsAction="ifRoom" />
-    <item
-        android:icon="@drawable/ic_download_white"
-        android:id="@+id/download"
-        android:title="下载"
-        app:showAsAction="ifRoom" />
 </menu>

@@ -43,7 +43,6 @@ class ComicListFragment : Fragment() {
 
     lateinit var addressPrefix: String
     lateinit var addressPostfix: String
-    private var tracker: SelectionTracker<Long>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -54,7 +53,6 @@ class ComicListFragment : Fragment() {
             tracker?.onRestoreInstanceState(it)
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -99,6 +97,7 @@ class ComicListFragment : Fragment() {
     val comicList = mutableListOf<Comic>()
     var currentPage = 0
     var hasMore: Boolean = true
+    private var tracker: SelectionTracker<Long>? = null
     var actionModeCallback = object : ActionMode.Callback {
         override fun onActionItemClicked(
             mode: ActionMode?,
@@ -216,8 +215,8 @@ class ComicListFragment : Fragment() {
                                 it.emptyView = emptyView
                                 it.setHasFixedSize(true)
                                 it.layoutManager = LinearLayoutManager(activity)
-                                adapter.tracker = SelectionTracker.Builder<Long>(
-                                    "selection${activity?.toString()}",
+                                tracker = SelectionTracker.Builder<Long>(
+                                    "selection$activity",
                                     rcvComicRank,
                                     ComicItemKeyProvider(comicList),
                                     ComicDetailsLookup(it),
@@ -225,8 +224,8 @@ class ComicListFragment : Fragment() {
                                 ).withSelectionPredicate(
                                     SelectionPredicates.createSelectAnything()
                                 ).build()
-                                tracker = adapter.tracker
-                                adapter.tracker?.let { tracker ->
+                                adapter.tracker = tracker
+                                tracker?.let { tracker ->
                                     tracker.addObserver(object :
                                         SelectionTracker.SelectionObserver<Long>() {
                                         override fun onSelectionChanged() {
