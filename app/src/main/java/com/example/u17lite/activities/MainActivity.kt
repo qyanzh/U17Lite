@@ -175,9 +175,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_star -> {
                 startActivity(Intent(this, SubscribeActivity::class.java))
             }
-            R.id.nav_test -> {
-                startActivity(Intent(this, TestActivity::class.java))
-            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

@@ -17,10 +17,6 @@
         android:icon="@drawable/ic_star_black_24dp"
         android:title="订阅" />
 
-    <item
-        android:id="@+id/nav_test"
-        android:icon="@drawable/ic_menu_camera"
-        android:title="测试" />
 
 
 </menu>
